@@ -1,11 +1,21 @@
-FROM debian AS poodlab
+FROM debian AS batman
 
 WORKDIR /root
 
-RUN apt-get update && apt-get install -y curl tcpdump
+RUN apt-get update && apt-get install -y curl
 COPY poodled.crt /usr/local/share/ca-certificates/poodled.crt
 RUN update-ca-certificates
 
+###
+
+FROM debian AS joker
+
+WORKDIR /root
+
+RUN apt-get update && apt-get install -y python3-scapy python3-cryptography
+COPY poodle.py .
+
+###
 
 FROM nginx AS catwoman
 

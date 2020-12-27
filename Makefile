@@ -9,8 +9,9 @@ prepare: clean
 	openssl req -x509 -nodes -newkey rsa:2048 \
 		-subj "/CN=catwoman" \
 		-keyout ./poodled.key -out ./poodled.crt
-	docker build --target poodlab --tag poodlab .
+	docker build --target batman --tag batman .
 	docker build --target catwoman --tag catwoman .
+	docker build --target joker --tag joker .
 	docker network create poodle_public_net
 	docker network create poodle_private_net
 
@@ -28,7 +29,7 @@ joker:
 		--network poodle_private_net \
 		--hostname joker \
 		--name joker \
-		--rm --interactive --tty poodlab /bin/bash
+		--rm --interactive --tty joker /bin/bash
 
 batman:
 	docker run \
@@ -36,7 +37,7 @@ batman:
 		--network poodle_private_net \
 		--hostname batman \
 		--name batman \
-		--rm --interactive --tty poodlab /bin/bash
+		--rm --interactive --tty batman /bin/bash
 
 network:
 	docker network connect poodle_public_net joker
