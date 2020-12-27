@@ -6,6 +6,9 @@ IP_NET_INT=$$(echo $(IP_JOKER_INT) | cut -d '.' -f 1,2,3).0/20
 IP_NET_PUB=$$(echo $(IP_JOKER_PUB) | cut -d '.' -f 1,2,3).0/20
 
 prepare: clean
+	openssl req -x509 -nodes -newkey rsa:2048 \
+		-subj "/CN=catwoman" \
+		-keyout ./poodled.key -out ./poodled.crt
 	docker build --target poodlab --tag poodlab .
 	docker build --target catwoman --tag catwoman .
 	docker network create poodle_public_net
@@ -43,5 +46,8 @@ network:
 	docker exec catwoman sh -c "echo '$(IP_BATMAN)   batman'   >> /etc/hosts"
 
 clean:
-	docker network remove poodle_public_net
-	docker network remove poodle_private_net
+	if docker ps | grep catwoman; then docker stop catwoman; fi
+	if docker network ls | grep poodle > /dev/null; then \
+		docker network remove poodle_public_net poodle_private_net; \
+	fi
+	if stat "poodled.*" 2> /dev/null; then rm poodled.key poodled.cert; fi
