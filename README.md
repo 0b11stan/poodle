@@ -16,79 +16,27 @@ Cette attaque fonctionne en 3 temps:
 
 ## Lab
 
-Build la machine de catwoman.
-```bash
-  docker build --tag catwoman ./catwoman/
+La commande `make prepare` permet de préparer l'environnement du laboratoire:
+
+* Construit les machines de catwoman, batman et joker.
+* Créé un réseaux privé et publique.
+* Démarre le serveur de catwoman dans le réseau publique et affiche son IP.
+
+En jouant `make run_batman` on démarre la machine de batman dans le réseau privé
+et on accède à un shell à l'interieur de cette machine.
+
+On peut vérifier que batman ne peut pas accéder à la machine de catwoman.
+```
+root@batman:~# ping -c 1 172.27.0.2
+PING 172.27.0.2 (172.27.0.2) 56(84) bytes of data.
+
+--- 172.27.0.2 ping statistics ---
+1 packets transmitted, 0 received, 100% packet loss, time 0ms
 ```
 
-Build la machine de batman.
-```bash
-  docker build --tag batman ./batman/
-```
-
-Build la machine du joker.
-```bash
-  docker build --tag joker ./joker/
-```
-
-Créer le réseau cible **poodle_private_net**.
-```bash
-  docker network create poodle_private_net
-```
-
-Créer un réseau publique **poodle_public_net**.
-```bash
-  docker network create poodle_public_net
-```
-
-Créer le serveur de catwoman et l'attacher au réseau publique.
-```bash
-  docker run \
-    --network poodle_public_net \
-    --hostname catwoman \
-    --name catwoman \
-    --rm --detach catwoman
-```
-
-Créer la machine de batman et l'attacher au réseau privé.
-```bash
-  docker run \
-    --network poodle_private_net \
-    --hostname batman \
-    --name batman \
-    --rm --interactive --tty batman /bin/bash
-```
-
-Créer la machine du joker et l'attacher au réseau privé.
-```bash
-  docker run \
-    --network poodle_private_net \
-    --hostname joker \
-    --name joker \
-    --rm --interactive --tty joker /bin/bash
-```
-
-Ajouter la machine du joker au réseau publique.
-```bash
-  docker network connect poodle_public_net joker
-```
-
-A ce stade batman ne devrait pas être en capacité de communiquer avec catwoman.
-```
-root@batman:/# ping -c 1 catwoman
-ping: catwoman: Name or service not known
-```
-
-Mais devrait être capable de communiquer avec joker.
-```
-root@batman:/# ping -c 1 joker 
-PING joker (172.21.0.2) 56(84) bytes of data.
-64 bytes from joker.poodle_private_net (172.21.0.2): icmp_seq=1 ttl=64 time=0.094 ms
-
---- joker ping statistics ---
-1 packets transmitted, 1 received, 0% packet loss, time 0ms
-rtt min/avg/max/mdev = 0.094/0.094/0.094/0.000 ms
-```
+En jouant `make run_joker` on démarre la machine du joker à l'intersection du
+réseau privé et publique puis on accède à un shell à l'interieur de cette
+machine.
 
 De son côté joker devrait être capable de communiquer avec batman.
 ```
@@ -112,6 +60,9 @@ PING catwoman (172.20.0.2) 56(84) bytes of data.
 1 packets transmitted, 1 received, 0% packet loss, time 0ms
 rtt min/avg/max/mdev = 0.164/0.164/0.164/0.000 ms
 ```
+
+Une fois toutes les opérations finies on peut réaliser un `make clean` pour
+éteindre les machines et supprimer les réseaux créés.
 
 ## Ressources
 
