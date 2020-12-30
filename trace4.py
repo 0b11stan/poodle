@@ -1,8 +1,8 @@
 # client force ssl 3 with curl
 
-# catwoman : openssl s_server -key /...key -cert /...crt -accept 443 -www
-# batman : curl -3 https://catwoman
-# joker : sniff(iface="eth1", filter="tcp", prn=lambda p: p["TCP"].show())
+# morpheus : openssl s_server -key /...key -cert /...crt -accept 443 -www
+# trinity : curl -3 https://morpheus
+# smith : sniff(iface="eth1", filter="tcp", prn=lambda p: p["TCP"].show())
 
 ###[ TCP ]### 
   sport= 50716

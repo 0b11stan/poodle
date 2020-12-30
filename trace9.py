@@ -1,9 +1,9 @@
 # server refuse tls 1.2, tls 1.1 and tls 1.0 and client force sslv3 with openssl
 
-# catwoman : openssl s_server -key /...key -cert /...crt -accept 443 -www \
+# morpheus : openssl s_server -key /...key -cert /...crt -accept 443 -www \
 #              -no_tls1_2 -no_tls1_1 -no_tls1
-# batman : openssl s_client -connect catwoman:443 -ssl3
-# joker : sniff(iface="eth1", filter="tcp", prn=lambda p: p["TCP"].show())
+# trinity : openssl s_client -connect morpheus:443 -ssl3
+# smith : sniff(iface="eth1", filter="tcp", prn=lambda p: p["TCP"].show())
 
 ###[ TCP ]### 
   sport= 48212
@@ -174,7 +174,7 @@
          |  msgtype= certificate
          |  msglen= 785
          |  certslen= 782
-         |  certs= [(779, [X.509 Cert. Subject:/CN=catwoman, Issuer:/CN=catwoman])]
+         |  certs= [(779, [X.509 Cert. Subject:/CN=morpheus, Issuer:/CN=morpheus])]
         mac= b''
         pad= b''
         padlen= None
@@ -376,7 +376,7 @@
          |  msgtype= certificate
          |  msglen= 785
          |  certslen= 782
-         |  certs= [(779, [X.509 Cert. Subject:/CN=catwoman, Issuer:/CN=catwoman])]
+         |  certs= [(779, [X.509 Cert. Subject:/CN=morpheus, Issuer:/CN=morpheus])]
         mac= b''
         pad= b''
         padlen= None

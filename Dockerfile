@@ -17,7 +17,7 @@ RUN apt-mark hold libssl-dev libssl1.0 libssl-doc openssl
 
 ###
 
-FROM openssl-ssl3 AS batman
+FROM openssl-ssl3 AS trinity
 
 WORKDIR /root
 
@@ -27,7 +27,7 @@ RUN update-ca-certificates
 
 ###
 
-FROM openssl-ssl3 AS catwoman
+FROM openssl-ssl3 AS morpheus
 
 WORKDIR /root
 
@@ -36,7 +36,7 @@ COPY poodled.key /root/poodled.key
 
 ###
 
-FROM debian AS joker
+FROM debian AS smith
 
 WORKDIR /root
 

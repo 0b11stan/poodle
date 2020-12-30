@@ -1,56 +1,56 @@
-IP_BATMAN=$$(docker exec batman hostname -i)
-IP_CATWOMAN=$$(docker exec catwoman hostname -i)
-IP_JOKER_INT=$$(docker exec joker hostname -i | cut -d ' ' -f 1)
-IP_JOKER_PUB=$$(docker exec joker hostname -i | cut -d ' ' -f 2)
+IP_BATMAN=$$(docker exec trinity hostname -i)
+IP_CATWOMAN=$$(docker exec morpheus hostname -i)
+IP_JOKER_INT=$$(docker exec smith hostname -i | cut -d ' ' -f 1)
+IP_JOKER_PUB=$$(docker exec smith hostname -i | cut -d ' ' -f 2)
 IP_NET_INT=$$(echo $(IP_JOKER_INT) | cut -d '.' -f 1,2,3).0/20
 IP_NET_PUB=$$(echo $(IP_JOKER_PUB) | cut -d '.' -f 1,2,3).0/20
 
 poodled.crt:
 	openssl req -x509 -nodes -newkey rsa:2048 \
-		-subj "/CN=catwoman" \
+		-subj "/CN=morpheus" \
 		-keyout ./poodled.key -out ./poodled.crt
 
 prepare: poodled.crt clean
-	docker build --target batman --tag batman .
-	docker build --target catwoman --tag catwoman .
-	docker build --target joker --tag joker .
+	docker build --target trinity --tag trinity .
+	docker build --target morpheus --tag morpheus .
+	docker build --target smith --tag smith .
 	docker network create poodle_public_net
 	docker network create poodle_private_net
 
-catwoman:
+morpheus:
 	docker run \
 		--cap-add NET_ADMIN \
 		--network poodle_public_net \
-		--hostname catwoman \
-		--name catwoman \
-		--rm --interactive --tty catwoman /bin/bash
+		--hostname morpheus \
+		--name morpheus \
+		--rm --interactive --tty morpheus /bin/bash
 
-joker:
+smith:
 	docker run \
 		--network poodle_private_net \
-		--hostname joker \
-		--name joker \
-		--rm --interactive --tty joker /bin/bash
+		--hostname smith \
+		--name smith \
+		--rm --interactive --tty smith /bin/bash
 
-batman:
+trinity:
 	docker run \
 		--cap-add NET_ADMIN \
 		--network poodle_private_net \
-		--hostname batman \
-		--name batman \
-		--rm --interactive --tty batman /bin/bash
+		--hostname trinity \
+		--name trinity \
+		--rm --interactive --tty trinity /bin/bash
 
 network:
-	docker network connect poodle_public_net joker
-	docker exec batman   ip route add $(IP_NET_PUB) via $(IP_JOKER_INT)
-	docker exec catwoman ip route add $(IP_NET_INT) via $(IP_JOKER_PUB)
-	docker exec batman   sh -c "echo '$(IP_CATWOMAN) catwoman' >> /etc/hosts"
-	docker exec catwoman sh -c "echo '$(IP_BATMAN)   batman'   >> /etc/hosts"
+	docker network connect poodle_public_net smith
+	docker exec trinity  ip route add $(IP_NET_PUB) via $(IP_JOKER_INT)
+	docker exec morpheus ip route add $(IP_NET_INT) via $(IP_JOKER_PUB)
+	docker exec trinity  sh -c "echo '$(IP_CATWOMAN) morpheus' >> /etc/hosts"
+	docker exec morpheus sh -c "echo '$(IP_BATMAN)   trinity'   >> /etc/hosts"
 
 clean:
-	if docker ps | grep catwoman; then docker stop catwoman; fi
-	if docker ps | grep batman; then docker stop batman; fi
-	if docker ps | grep joker; then docker stop joker; fi
+	if docker ps | grep morpheus; then docker stop morpheus; fi
+	if docker ps | grep trinity; then docker stop trinity; fi
+	if docker ps | grep smith; then docker stop smith; fi
 	if docker network ls | grep poodle > /dev/null; then \
 		docker network remove poodle_public_net poodle_private_net; \
 	fi

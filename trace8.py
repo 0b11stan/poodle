@@ -1,9 +1,9 @@
 # server refuse tls 1.2, tls 1.1 and tls 1.0 with openssl
 
-# catwoman : openssl s_server -key /...key -cert /...crt -accept 443 -www \
+# morpheus : openssl s_server -key /...key -cert /...crt -accept 443 -www \
 #              -no_tls1_2 -no_tls1_1 -no_tls1
-# batman : openssl s_client -connect catwoman:443
-# joker : sniff(iface="eth1", filter="tcp", prn=lambda p: p["TCP"].show())
+# trinity : openssl s_client -connect morpheus:443
+# smith : sniff(iface="eth1", filter="tcp", prn=lambda p: p["TCP"].show())
 
 # Le serveur RESET la connection après la reception du ClientHello... chelou.
 

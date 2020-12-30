@@ -1,8 +1,8 @@
 # ssl3 is forced on both sides with curl
 
-# catwoman : openssl s_server -ssl3 -key /...key -cert /...crt -accept 443 -www
-# batman : curl -3 https://catwoman
-# joker : sniff(iface="eth1", filter="tcp", prn=lambda p: p["TCP"].show())
+# morpheus : openssl s_server -ssl3 -key /...key -cert /...crt -accept 443 -www
+# trinity : curl -3 https://morpheus
+# smith : sniff(iface="eth1", filter="tcp", prn=lambda p: p["TCP"].show())
 
 ###[ TCP ]### 
   sport= 47996
@@ -142,7 +142,7 @@
          |  msgtype= certificate
          |  msglen= 785
          |  certslen= 782
-         |  certs= [(779, [X.509 Cert. Subject:/CN=catwoman, Issuer:/CN=catwoman])]
+         |  certs= [(779, [X.509 Cert. Subject:/CN=morpheus, Issuer:/CN=morpheus])]
         mac= b''
         pad= b''
         padlen= None

@@ -1,8 +1,8 @@
 # server force tls ssl 3 with openssl
 
-# catwoman : openssl s_server -ssl3 -key /...key -cert /...crt -accept 443 -www
-# batman : curl https://catwoman
-# joker : sniff(iface="eth1", filter="tcp", prn=lambda p: p["TCP"].show())
+# morpheus : openssl s_server -ssl3 -key /...key -cert /...crt -accept 443 -www
+# trinity : curl https://morpheus
+# smith : sniff(iface="eth1", filter="tcp", prn=lambda p: p["TCP"].show())
 
 ###[ TCP ]### 
   sport= 48904
@@ -79,7 +79,7 @@
       |   |  type= server_name
       |   |  len= 13
       |   |  servernameslen= 11
-      |   |  servernames= [b'catwoman']
+      |   |  servernames= [b'morpheus']
       |   |###[ TLS Extension - Supported Point Format ]### 
       |   |  type= ec_point_formats
       |   |  len= 4
@@ -178,7 +178,7 @@
          |  msgtype= certificate
          |  msglen= 785
          |  certslen= 782
-         |  certs= [(779, [X.509 Cert. Subject:/CN=catwoman, Issuer:/CN=catwoman])]
+         |  certs= [(779, [X.509 Cert. Subject:/CN=morpheus, Issuer:/CN=morpheus])]
         mac= b''
         pad= b''
         padlen= None

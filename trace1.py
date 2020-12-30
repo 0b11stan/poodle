@@ -1,8 +1,8 @@
 # ssl3 is forced on both sides with openssl
 
-# catwoman : openssl s_server -ssl3 -key /...key -cert /...crt -accept 443 -www
-# batman : openssl s_client -ssl3 -connect catwoman:443
-# joker : sniff(iface="eth1", filter="tcp", prn=lambda p: p["TCP"].show())
+# morpheus : openssl s_server -ssl3 -key /...key -cert /...crt -accept 443 -www
+# trinity : openssl s_client -ssl3 -connect morpheus:443
+# smith : sniff(iface="eth1", filter="tcp", prn=lambda p: p["TCP"].show())
 
 ###[ TCP ]### 
   sport= 46858
@@ -141,7 +141,7 @@
          |  msgtype= certificate
          |  msglen= 785
          |  certslen= 782
-         |  certs= [(779, [X.509 Cert. Subject:/CN=catwoman, Issuer:/CN=catwoman])]
+         |  certs= [(779, [X.509 Cert. Subject:/CN=morpheus, Issuer:/CN=morpheus])]
         mac= b''
         pad= b''
         padlen= None

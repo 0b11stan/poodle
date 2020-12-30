@@ -1,8 +1,8 @@
 # client refuses tls 1.2 and tls 1.1 with openssl
 
-# catwoman : openssl s_server -key /...key -cert /...crt -accept 443 -www
-# batman : openssl s_client -connect catwoman:443 -no_tls1_2 -no_tls1_1
-# joker : sniff(iface="eth1", filter="tcp", prn=lambda p: p["TCP"].show())
+# morpheus : openssl s_server -key /...key -cert /...crt -accept 443 -www
+# trinity : openssl s_client -connect morpheus:443 -no_tls1_2 -no_tls1_1
+# smith : sniff(iface="eth1", filter="tcp", prn=lambda p: p["TCP"].show())
 
 ###[ TCP ]### 
   sport= 53834
@@ -172,7 +172,7 @@
          |  msgtype= certificate
          |  msglen= 785
          |  certslen= 782
-         |  certs= [(779, [X.509 Cert. Subject:/CN=catwoman, Issuer:/CN=catwoman])]
+         |  certs= [(779, [X.509 Cert. Subject:/CN=morpheus, Issuer:/CN=morpheus])]
         mac= b''
         pad= b''
         padlen= None

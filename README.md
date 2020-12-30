@@ -35,9 +35,9 @@ Cette attaque fonctionne souvent en 3 temps:
 
 **TL;DR:**
 * `make prepare` dans un premier terminal
-* `make catwoman` dans un deuxième terminal
-* `make joker` dans un troisième terminal
-* `make batman` dans un quatrième terminal
+* `make morpheus` dans un deuxième terminal
+* `make smith` dans un troisième terminal
+* `make trinity` dans un quatrième terminal
 * `make network` dans le premier terminal
 * _be nasty_
 * `make clean` une fois qu'on à fini de jouer pour tout supprimer
@@ -59,7 +59,7 @@ En supprimant la mention `SSLv3` de la ligne 19 on empêcherait l'attaque.
 
 #### Connection aux machines
 
-`make catwoman`, `make joker`, `make batman`
+`make morpheus`, `make smith`, `make trinity`
 
 #### Configurer les réseau
 
@@ -67,25 +67,25 @@ En supprimant la mention `SSLv3` de la ligne 19 on empêcherait l'attaque.
 
 Joker:
 ```
-root@joker:~# ping -c 1 catwoman | grep received
+root@smith:~# ping -c 1 morpheus | grep received
 1 packets transmitted, 1 received, 0% packet loss, time 0ms
-root@joker:~# ping -c 1 batman | grep received
+root@smith:~# ping -c 1 trinity | grep received
 1 packets transmitted, 1 received, 0% packet loss, time 0ms
 ```
 
 Batman:
 ```
-root@batman:~# ping -c 1 joker | grep received
+root@trinity:~# ping -c 1 smith | grep received
 1 packets transmitted, 1 received, 0% packet loss, time 0ms
-root@batman:~# ping -c 1 catwoman | grep received
+root@trinity:~# ping -c 1 morpheus | grep received
 1 packets transmitted, 1 received, 0% packet loss, time 0ms
 ```
 
 Catwoman:
 ```
-root@catwoman:~# ping -c 1 joker | grep received
+root@morpheus:~# ping -c 1 smith | grep received
 1 packets transmitted, 1 received, 0% packet loss, time 0ms
-root@catwoman:~# ping -c 1 batman | grep received
+root@morpheus:~# ping -c 1 trinity | grep received
 1 packets transmitted, 1 received, 0% packet loss, time 0ms
 ```
 
@@ -97,44 +97,44 @@ root@catwoman:~# ping -c 1 batman | grep received
 
 Realiser une connection ssl en forcant la version 3:
 ```
-root@catwoman:~# openssl s_server -ssl3 -key /root/poodled.key -cert /root/poodled.crt -accept 443 -www
-root@batman:~# openssl s_client -ssl3 -connect catwoman:443
+root@morpheus:~# openssl s_server -ssl3 -key /root/poodled.key -cert /root/poodled.crt -accept 443 -www
+root@trinity:~# openssl s_client -ssl3 -connect morpheus:443
 ```
 
 En utilisant les commandes ci-dessus on obtient le traffique SSL détaillé dans
-[trace1.py](./trace1.py) qui passe par joker.
+[trace1.py](./trace1.py) qui passe par smith.
 
 On peut aussi utiliser une commande curl classique qui, si on force le traffique
-en sslv3 (`curl -3 https://catwoman`) va nous donner une trace sensiblement similaire ([trace2.py](./trace2.py)).
+en sslv3 (`curl -3 https://morpheus`) va nous donner une trace sensiblement similaire ([trace2.py](./trace2.py)).
 
 On à du rebuild openssl pour autoriser l'utilisation de sslv3. Après ça le
 downgrade fonctionne bien.
 
-Sur la machine de catwoman on démarre un serveur qui refuse les protocoles > à
+Sur la machine de morpheus on démarre un serveur qui refuse les protocoles > à
 SSLv3 pour générer le traffique qui sera envoyer par notre attaquant et tester
 que le downgrade foncitonne bien du côté du client.
 ```
-root@catwoman:~# openssl s_server -key /root/poodled.key -cert /root/poodled.crt -accept 443 -www -no_tls1_2 -no_tls1_1 -no_tls1
+root@morpheus:~# openssl s_server -key /root/poodled.key -cert /root/poodled.crt -accept 443 -www -no_tls1_2 -no_tls1_1 -no_tls1
 Using default temp DH parameters
 Using default temp ECDH parameters
 ACCEPT
 ```
 
-Sur la machine de batman on fait une requête mais cette fois sans forcer
+Sur la machine de trinity on fait une requête mais cette fois sans forcer
 l'utilisation de sslv3. On voit bien que pourtant c'est bien ce protocole qui
 aura été utilisé pour la communication au final. Pour constater le changement de
 protocole, se référer au fichier [trace10.py](./trace10.py) pour une lecture
 au format text ou au fichier [legit_downgrade.pcap](./legit_downgrade.pcap) pour
 le traffique réseau brute.
 ```
-root@batman:~# openssl s_client -connect catwoman:443
+root@trinity:~# openssl s_client -connect morpheus:443
 CONNECTED(00000003)
-depth=0 CN = catwoman
+depth=0 CN = morpheus
 verify return:1
 ---
 Certificate chain
- 0 s:/CN=catwoman
-   i:/CN=catwoman
+ 0 s:/CN=morpheus
+   i:/CN=morpheus
 ---
 Server certificate
 -----BEGIN CERTIFICATE-----
@@ -156,8 +156,8 @@ Nu9PBdSEygQgv3jttgKXWV3rSn0JytFOiVIT/9OKdlnHwLaHBe9AXESboJ2KkdkE
 llc6QASPp+jprWpKLm4hIEvmZtR1Gk+GOy3W8P+XcPfakK/x2Yb2yu3rKIJRm/ge
 7zY5koBKIhXU4es=
 -----END CERTIFICATE-----
-subject=/CN=catwoman
-issuer=/CN=catwoman
+subject=/CN=morpheus
+issuer=/CN=morpheus
 ---
 No client certificate CA names sent
 ---
@@ -184,7 +184,7 @@ SSL-Session:
 ---
 ```
 
-Pour exploiter il suffit d'intercepter le "Client Hello" de batman, de changer
+Pour exploiter il suffit d'intercepter le "Client Hello" de trinity, de changer
 le protocole par sslv3, le serveur va alors renvoyer un "Server Hello" pour
 sslv3 et le client reverra ses ambitions cryptographiques à la baisse comme dans
 l'exemple précédent.
