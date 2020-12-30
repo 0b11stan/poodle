@@ -44,9 +44,31 @@ root@catwoman:~# ping -c 1 batman | grep received
 1 packets transmitted, 1 received, 0% packet loss, time 0ms
 ```
 
-
 Une fois toutes les opérations finies on peut réaliser un `make clean` pour
 éteindre les machines et supprimer les réseaux créés.
+
+Remarque: les ligne 19 et 20 de la configuration nginx sont intéressantes et
+contiennent la vulnérabilité.
+```
+19  ssl_protocols SSLv3 TLSv1 TLSv1.1 TLSv1.2;
+20  ssl_prefer_server_ciphers on;
+```
+
+En supprimant la mention `SSLv3` de la ligne 19 on empêcherait l'attaque.
+
+## Exploitation
+
+Realiser une connection ssl en forcant la version 3:
+```
+root@catwoman:~# openssl s_server -ssl3 -key /root/poodled.key -cert /root/poodled.crt -accept 443 -www
+root@batman:~# openssl s_client -ssl3 -connect catwoman:443
+```
+
+En utilisant les commandes ci-dessus on obtient le traffique SSL détaillé dans
+[trace1.py](./trace1.py) qui passe par joker.
+
+On peut aussi utiliser une commande curl classique qui, si on force le traffique
+en sslv3 (`curl -3 https://catwoman`) va nous donner une trace sensiblement similaire ([trace2.py](./trace2.py)).
 
 ## Ressources
 

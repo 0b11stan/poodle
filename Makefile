@@ -5,10 +5,12 @@ IP_JOKER_PUB=$$(docker exec joker hostname -i | cut -d ' ' -f 2)
 IP_NET_INT=$$(echo $(IP_JOKER_INT) | cut -d '.' -f 1,2,3).0/20
 IP_NET_PUB=$$(echo $(IP_JOKER_PUB) | cut -d '.' -f 1,2,3).0/20
 
-prepare: clean
+poodled.crt:
 	openssl req -x509 -nodes -newkey rsa:2048 \
 		-subj "/CN=catwoman" \
 		-keyout ./poodled.key -out ./poodled.crt
+
+prepare: poodled.crt clean
 	docker build --target batman --tag batman .
 	docker build --target catwoman --tag catwoman .
 	docker build --target joker --tag joker .
@@ -48,6 +50,8 @@ network:
 
 clean:
 	if docker ps | grep catwoman; then docker stop catwoman; fi
+	if docker ps | grep batman; then docker stop batman; fi
+	if docker ps | grep joker; then docker stop joker; fi
 	if docker network ls | grep poodle > /dev/null; then \
 		docker network remove poodle_public_net poodle_private_net; \
 	fi
