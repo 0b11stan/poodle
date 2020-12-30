@@ -1,4 +1,4 @@
-# client ask for tls 1.0 with openssl
+# client refuses tls 1.2 and tls 1.1 with openssl
 
 # catwoman : openssl s_server -key /...key -cert /...crt -accept 443 -www
 # batman : openssl s_client -connect catwoman:443 -no_tls1_2 -no_tls1_1

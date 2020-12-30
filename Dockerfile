@@ -1,4 +1,23 @@
-FROM debian:jessie AS batman
+FROM debian:jessie AS openssl-ssl3
+
+COPY sources.list /etc/apt/sources.list
+RUN apt-get update && apt-get install -y zlib1g-dev zlib1g
+RUN apt-get install -y devscripts build-essential make zlib1g-dev libxml2-dev
+RUN mkdir -p /_apt/
+RUN cd /_apt/ && apt-get source openssl
+RUN apt-get -y build-dep openssl
+RUN sed -i 's/no-ssl2 no-ssl3/enable-ssl3/' /_apt/openssl-1.0.1t/debian/rules
+RUN cd /_apt/openssl-1.0.1t/ && debuild -b -uc -us
+RUN cd /_apt/ && \
+    dpkg -i ./libssl-dev_1.0.1t-1+deb8u12_amd64.deb \
+            ./libssl-doc_1.0.1t-1+deb8u12_all.deb \
+            ./libssl1.0.0_1.0.1t-1+deb8u12_amd64.deb \
+            ./openssl_1.0.1t-1+deb8u12_amd64.deb
+RUN apt-mark hold libssl-dev libssl1.0 libssl-doc openssl
+
+###
+
+FROM openssl-ssl3 AS batman
 
 WORKDIR /root
 
@@ -8,47 +27,18 @@ RUN update-ca-certificates
 
 ###
 
+FROM openssl-ssl3 AS catwoman
+
+WORKDIR /root
+
+COPY poodled.crt /root/poodled.crt
+COPY poodled.key /root/poodled.key
+
+###
+
 FROM debian AS joker
 
 WORKDIR /root
 
 RUN apt-get update && apt-get install -y python3-scapy python3-cryptography
 COPY poodle.py .
-
-###
-
-FROM debian:jessie AS catwoman
-
-WORKDIR /root
-
-RUN apt-get update && apt-get install -y openssl
-COPY poodled.crt /root/poodled.crt
-COPY poodled.key /root/poodled.key
-
-###
-
-FROM httpd AS catwoman-nginx
-
-WORKDIR /root
-
-RUN apt-get update && apt-get install -y iproute2
-
-COPY nginx.conf /etc/nginx/nginx.conf
-COPY poodled.crt /etc/ssl/certs/poodled.crt
-COPY poodled.key /etc/ssl/private/poodled.key
-
-###
-
-FROM httpd AS catwoman-apache
-
-RUN apt-get update && apt-get install -y iproute2
-RUN sed -i 's/-SSLv3//' conf/extra/httpd-ssl.conf
-RUN sed -i 's/^ServerName.*/ServerName catwoman:443/' conf/extra/httpd-ssl.conf
-RUN sed -i 's/^#\(Include.*httpd-ssl.conf\)/\1/' conf/httpd.conf
-RUN sed -i 's/^#LoadModule ssl_module/LoadModule ssl_module/' conf/httpd.conf
-RUN sed -i 's/^#LoadModule socache_shmcb_module/LoadModule socache_shmcb_module/' conf/httpd.conf
-
-COPY poodled.crt /usr/local/apache2/conf/server.crt
-COPY poodled.key /usr/local/apache2/conf/server.key
-
-WORKDIR /root

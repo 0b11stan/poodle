@@ -1,0 +1,14 @@
+# deb http://snapshot.debian.org/archive/debian/20201209T232235Z jessie main
+deb http://deb.debian.org/debian jessie main
+# deb http://snapshot.debian.org/archive/debian-security/20201209T232235Z jessie/updates main
+deb http://security.debian.org/debian-security jessie/updates main
+# deb http://snapshot.debian.org/archive/debian/20201209T232235Z jessie-updates main
+deb http://deb.debian.org/debian jessie-updates main
+
+# for openssl rebuild
+deb http://httpredir.debian.org/debian/ jessie main contrib non-free
+deb http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
+deb http://security.debian.org/ jessie/updates main contrib non-free
+deb-src http://httpredir.debian.org/debian/ jessie main contrib non-free
+deb-src http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
+deb-src http://security.debian.org/ jessie/updates main contrib non-free

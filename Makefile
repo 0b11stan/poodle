@@ -23,8 +23,7 @@ catwoman:
 		--network poodle_public_net \
 		--hostname catwoman \
 		--name catwoman \
-		--rm --detach catwoman
-	docker exec --interactive --tty catwoman /bin/bash
+		--rm --interactive --tty catwoman /bin/bash
 
 joker:
 	docker run \
