@@ -5,20 +5,35 @@ attaque permet de décrypter une communication chiffrée avec TLS. Elle s'appuie
 sur un enchainement de plusieurs vulnérabilités qui touchent les serveurs web
 dont la version de TLS est **inferieur à 1.3**.
 
-Le fonctionnement de son POODLE est parfaitement illustré par son nom qui est
+Le fonctionnement de POODLE est parfaitement illustré par son nom qui est
 l'acronyme de "**P**adding **O**racle **O**n **D**owngraded **L**egacy
-**E**ncryption".
+**E**ncryption". Lors d'une attaque par homme du milieux, l'attaquant peut
+"voir" tout le traffique de sa victime. Ce type d'attaque est très fréquent et
+facilité par de nombreuses vunérabilités au niveau des couches physiques et de
+liaison de donnée. Ces vulnérabilité sont difficiles à corrigés prour des
+raisons d'interopérabilité entre les réseaux à l'échelle d'internet. Ainsi,
+cela fait maintenant plusieurs décénies que les concepteurs d'applications ne se
+reposent plus sur les couches inferieurs pour assurer la confidentialité des
+donnés échangés. Des protocoles de chiffrement comme SSL/TLS sont aujourd'hui
+les seul rempare efficace contre les attaques par homme du milieux.
+
+Aujourd'hui, l'enjeux pour un attaquant est donc de déjouer ces mechanismes de
+chiffrement de niveau applicatif et c'est ici que POODLE intervient puisquelle
+à pour objectif de permettre, par une attaque "en ligne", le dèchiffrement des
+donnée encapsulés par le protocole TLS.
 
 Cette attaque fonctionne souvent en 3 temps:
 1. Mettre en place une attaque par homme du milieux au niveau réseau.
-2. Forcer une version inferieur (SSLv3) de SSL/TLS sur le client.
-3. On utilise la vuln Padding Oracle sur CBC pour découvrir du contenu (cookie).
+2. Dégrader le niveau de sécurité d'une connexion tls en forcant une version
+   ancienne du protocole.
+3. Utiliser une attaque de cryptanalyse (Padding Oracle) à laquelle la version
+   dégradée est vulnérable pour découvrir un élément sensible.
 
 ## Preuve d'exploitation
 
 ### Le laboratoire
 
-**tl;dr:**
+**TL;DR:**
 * `make prepare` dans un premier terminal
 * `make catwoman` dans un deuxième terminal
 * `make joker` dans un troisième terminal
