@@ -103,6 +103,8 @@ Le labo simulera les machines de nos 3 protagonistes:
 
 <img src="./labo.png" width=500 />
 
+![labo](./labo.png)
+
 Pour s'assurer que `trinity` et `morpheus` puissent communiquer malgrès
 d'éventuelles différences de configuration, les deux machines peuvent s'adapter
 à la version de SSL/TLS proposé par l'autre. L'agent Smith est au courant de
