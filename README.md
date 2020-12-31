@@ -190,15 +190,14 @@ _TODO : exploitation incoming (trace1, trace2) ..._
 
 #### Downgraded Legacy Encryption
 
+##### Présentation de la vulnérabilité
+
 Ici nous allons nous intéresser sur la méthode à utiliser pour dégrader la
 version de TLS dans la communication entre `trinity` et `morpheus`.
 
-On à du rebuild openssl pour autoriser l'utilisation de sslv3. Après ça le
-downgrade fonctionne bien.
-
-Sur la machine de morpheus on démarre un serveur qui refuse les protocoles > à
-SSLv3 pour générer le traffique qui sera envoyer par notre attaquant et tester
-que le downgrade foncitonne bien du côté du client.
+D'abord, vérifions que `trinity` accepte bien de dégrader sa connection sur
+demande de `morpheus`. Sur la machine de Morpheus on démarre un serveur qui
+refuse les protocoles les plus récents, ne laissant que SSLv3 de disponible.
 ```
 root@morpheus:~# openssl s_server -key /root/poodled.key -cert /root/poodled.crt -accept 443 -www -no_tls1_2 -no_tls1_1 -no_tls1
 Using default temp DH parameters
@@ -206,12 +205,21 @@ Using default temp ECDH parameters
 ACCEPT
 ```
 
-Sur la machine de trinity on fait une requête mais cette fois sans forcer
-l'utilisation de sslv3. On voit bien que pourtant c'est bien ce protocole qui
-aura été utilisé pour la communication au final. Pour constater le changement de
-protocole, se référer au fichier [trace10.py](./trace10.py) pour une lecture
-au format text ou au fichier [legit_downgrade.pcap](./legit_downgrade.pcap) pour
-le traffique réseau brute.
+On peut analyser en parallèle toute le traffique depuis `smith` en utilisant
+scapy en mode interractif (commande `scapy3` dans le shell de `smith`):
+```python
+load_layer('tls')
+
+def capture(pck):
+    wrpcap('/tmp/server_downgrade.pcap', pck, append=True)
+    pck["TCP"].show()
+
+sniff(iface="eth1", filter="tcp", prn=lambda p: capture(p))
+```
+
+Si `trinity` tente de réaliser une connexion sécurisée sur `morpheus` en ne
+spécifiant aucune option spécifique, on peut constater que la connexion sera
+correctement établie mais utilisant le sslv3.
 ```
 root@trinity:~# openssl s_client -connect morpheus:443
 CONNECTED(00000003)
@@ -225,20 +233,7 @@ Certificate chain
 Server certificate
 -----BEGIN CERTIFICATE-----
 MIIDBzCCAe+gAwIBAgIUUzUL9khTt2GxSYH7oUMz22pg6RkwDQYJKoZIhvcNAQEL
-BQAwEzERMA8GA1UEAwwIY2F0d29tYW4wHhcNMjAxMjMwMDk0NzI1WhcNMjEwMTI5
-MDk0NzI1WjATMREwDwYDVQQDDAhjYXR3b21hbjCCASIwDQYJKoZIhvcNAQEBBQAD
-ggEPADCCAQoCggEBAMWSyPZ6UDTxHhgGwAOzU39heX+Ub9mNqZA79MOqQQyzrr5x
-sZ8yN4b9auK1MDsizuyMCn6qSuLwYQBOJ/WeBer5IdcdZTOZiiT+Dqh3nIp6LRQt
-FNqZQ4Cth5g1a/8NLSQjmtc8I5saFoVcrcGZlo+oW7aSwNfseakHAYZBnoWQq3qc
-AwmE7C5NYZzXMvWws8sT6ULHzfDJ4A2ajjGQRgeOQRPLxxp9BeVrTe0+GHkPXmsA
-9N9va/or9OsCELjLDc0ZdDRvzDGIMmL26wWoYi68+HLNZzu9LTuJN3agTzU/kCL7
-G8sXzS40KEHzhv1cYbuG652msdcA8fp+PBSacVMCAwEAAaNTMFEwHQYDVR0OBBYE
-FOfdv6hxsQgFeuKal8b78c3CLpvsMB8GA1UdIwQYMBaAFOfdv6hxsQgFeuKal8b7
-8c3CLpvsMA8GA1UdEwEB/wQFMAMBAf8wDQYJKoZIhvcNAQELBQADggEBAJmm13wN
-LstDmaqpHMzkZk7To758U/XPE7PGRefg9BonagVMzkY40k4FC8rm/XvvSCSblXqE
-Ik8gcHOe+7jtF8s24Dywj0eq4J89IpEIyq4b6CYEBhBTsqKCdOQWa13uXOCkiTXa
-NPRbgX7nMFFF88iMbXFsR+t5wka+t08/nuJd9V6gSSo9U3mAKzHBGStxTRztfW+k
-Nu9PBdSEygQgv3jttgKXWV3rSn0JytFOiVIT/9OKdlnHwLaHBe9AXESboJ2KkdkE
+  ...
 llc6QASPp+jprWpKLm4hIEvmZtR1Gk+GOy3W8P+XcPfakK/x2Yb2yu3rKIJRm/ge
 7zY5koBKIhXU4es=
 -----END CERTIFICATE-----
@@ -270,22 +265,46 @@ SSL-Session:
 ---
 ```
 
-Pour exploiter il suffit d'intercepter le "Client Hello" de trinity, de changer
-le protocole par sslv3, le serveur va alors renvoyer un "Server Hello" pour
-sslv3 et le client reverra ses ambitions cryptographiques à la baisse comme dans
-l'exemple précédent.
+
+Pour constater plus directement le changement de protocole qui à eu lieux, nous
+pouvons nous référer au fichier
+[server_downgrade.py](./captures/server_downgrade.py) (format text) ou au
+fichier [server_downgrade.pcap](./captures/server_downgrade.pcap) (a ouvrir dans
+wireshark). On y vois que le handshake initié par `trinity` ( **Client Hello** )
+demande bien la version TLS1.2 du protocole mais que `morpheus` répond en
+proposant le protocole SSL3.0 ( **Server Hello** ).
+
+De la même façon, nous pouvons vérifier que le serveur acceptera de dégrader sa
+connexion si le client se présente avec le protocole SSLv3 (voir
+[client_downgrade.py](./captures/client_downgrade.py) ou
+[client_downgrade.pcap](./captures/client_downgrade.pcap) ).
+
+##### Demonstration de l'exploitation
+
+Pour exploiter cette vulnérabilité il suffit d'écrire un script python qui
+suivra ces spécification:
+
+1. Intercepte et bloque les **"Client Hello"** de `trinity`.
+2. Modifie la version du protocole dans le paquet pour la passer à SSLv3.
+3. Transmet le paquet à `morpheus`.
+
+Le serveur imaginera que le client ne supporte pas de versions plus récentes de
+TLS et renverra un **"Server Hello"** pour SSLv3. De son côté, le client pensera
+que c'est le serveur qui ne supporte pas TLS et reverra ses ambitions
+cryptographiques à la baisse comme dans les exemples précédent.
 
 ## Mitigation
 
 Cette attaque fut extrêmement sensible et d'une efficacité redoutable. Les
 réponses ont été multiples pour corriger la vulnérabilité et des efforts de la
-communauté à tout les niveau ont permit une sécurité en profondeur qui rend
-cette attaque de moins en moins probable sur la grande majorité des applications:
+communauté à tout les niveaux ont permit une sécurité en profondeur qui rend
+cette attaque de moins en moins probable sur la grande majorité des
+applications:
 
 * Les dévellopeurs de serveur web (apache, nginx, ...) ont ajouté des options
-  permettant de choisir au moyens d'une liste blanche les versions de TLS que
-  leur produit pourrait accepter obligeant les gens à spécifier explicitement
-  le niveau de sécurité de leurs serveurs en fonction du niveau
+  permettant de choisir, au moyens d'une liste blanche, les versions de TLS que
+  leur produit pourrait accepter obligeant les administrateurs à spécifier
+  explicitement le niveau de sécurité de leurs serveurs en fonction du niveau
   d'intéropérabilité nécessaire.
 * Les dévellopeurs de client web (curl, firefox, chrome, ...) ont durcie les
   options par défaut, ajoutant la possibilité de limiter l'étandue des versions

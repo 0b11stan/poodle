@@ -1,61 +1,62 @@
-# server refuse tls 1.2, tls 1.1 and tls 1.0 and client force sslv3 with openssl
-
-# morpheus : openssl s_server -key /...key -cert /...crt -accept 443 -www \
-#              -no_tls1_2 -no_tls1_1 -no_tls1
-# trinity : openssl s_client -connect morpheus:443
-# smith : sniff(iface="eth1", filter="tcp", prn=lambda p: p["TCP"].show())
+##
+# Server refuses tls 1.2, tls 1.1 and tls 1.0 with openssl
+#   morpheus : openssl s_server -key /...key -cert /...crt -accept 443 -www \
+#                -no_tls1_2 -no_tls1_1 -no_tls1
+#   trinity : openssl s_client -connect morpheus:443
+#   smith : sniff(iface="eth1", filter="tcp", prn=lambda p: p["TCP"].show())
+##
 
 ###[ TCP ]### 
-  sport= 56008
+  sport= 42884
   dport= https
-  seq= 3556361340
+  seq= 2363499937
   ack= 0
   dataofs= 10
   reserved= 0
   flags= S
   window= 64240
-  chksum= 0x5861
+  chksum= 0x5859
   urgptr= 0
-  options= [('MSS', 1460), ('SAckOK', b''), ('Timestamp', (117668062, 0)), ('NOP', None), ('WScale', 7)]
+  options= [('MSS', 1460), ('SAckOK', b''), ('Timestamp', (2277923831, 0)), ('NOP', None), ('WScale', 7)]
 
 ###[ TCP ]### 
   sport= https
-  dport= 56008
-  seq= 2440459204
-  ack= 3556361341
+  dport= 42884
+  seq= 4099286010
+  ack= 2363499938
   dataofs= 10
   reserved= 0
   flags= SA
   window= 65160
-  chksum= 0x5861
+  chksum= 0x5859
   urgptr= 0
-  options= [('MSS', 1460), ('SAckOK', b''), ('Timestamp', (1372246718, 117668062)), ('NOP', None), ('WScale', 7)]
+  options= [('MSS', 1460), ('SAckOK', b''), ('Timestamp', (3126597767, 2277923831)), ('NOP', None), ('WScale', 7)]
 
 ###[ TCP ]### 
-  sport= 56008
+  sport= 42884
   dport= https
-  seq= 3556361341
-  ack= 2440459205
+  seq= 2363499938
+  ack= 4099286011
   dataofs= 8
   reserved= 0
   flags= A
   window= 502
-  chksum= 0x5859
+  chksum= 0x5851
   urgptr= 0
-  options= [('NOP', None), ('NOP', None), ('Timestamp', (117668063, 1372246718))]
+  options= [('NOP', None), ('NOP', None), ('Timestamp', (2277923831, 3126597767))]
 
 ###[ TCP ]### 
-  sport= 56008
+  sport= 42884
   dport= https
-  seq= 3556361341
-  ack= 2440459205
+  seq= 2363499938
+  ack= 4099286011
   dataofs= 8
   reserved= 0
   flags= PA
   window= 502
-  chksum= 0x597a
+  chksum= 0x5972
   urgptr= 0
-  options= [('NOP', None), ('NOP', None), ('Timestamp', (117668063, 1372246718))]
+  options= [('NOP', None), ('NOP', None), ('Timestamp', (2277923831, 3126597767))]
 ###[ TLS ]### 
      type= handshake
      version= TLS 1.0
@@ -66,8 +67,8 @@
       |  msgtype= client_hello
       |  msglen= 280
       |  version= TLS 1.2
-      |  gmt_unix_time= Thu, 19 Jul 2063 02:37:04 +0000 (2952038224)
-      |  random_bytes= 785ed24c14b42417d26922e62b689853be082116096671afe7a5c7cd
+      |  gmt_unix_time= Tue, 22 Jan 2030 13:33:11 +0000 (1895319191)
+      |  random_bytes= 387bc7505aa9c12d3fb4cde5350aba0ada9950c9ba6e5c232fbe6322
       |  sidlen= 0
       |  sid= ''
       |  cipherslen= 130
@@ -105,31 +106,29 @@
 
 ###[ TCP ]### 
   sport= https
-  dport= 56008
-  seq= 2440459205
-  ack= 3556361630
+  dport= 42884
+  seq= 4099286011
+  ack= 2363500227
   dataofs= 8
   reserved= 0
   flags= A
   window= 507
-  chksum= 0x5859
+  chksum= 0x5851
   urgptr= 0
-  options= [('NOP', None), ('NOP', None), ('Timestamp', (1372246718, 117668063))]
+  options= [('NOP', None), ('NOP', None), ('Timestamp', (3126597767, 2277923831))]
 
-/usr/lib/python3/dist-packages/scapy/layers/tls/keyexchange.py:588: CryptographyDeprecationWarning: Support for unsafe construction of public numbers from encoded data will be removed in a future version. Please use EllipticCurvePublicKey.from_encoded_point
-  pubnum = import_point(curve, self.point)
 ###[ TCP ]### 
   sport= https
-  dport= 56008
-  seq= 2440459205
-  ack= 3556361630
+  dport= 42884
+  seq= 4099286011
+  ack= 2363500227
   dataofs= 8
   reserved= 0
   flags= PA
   window= 507
-  chksum= 0x5d2f
+  chksum= 0x5d27
   urgptr= 0
-  options= [('NOP', None), ('NOP', None), ('Timestamp', (1372246719, 117668063))]
+  options= [('NOP', None), ('NOP', None), ('Timestamp', (3126597771, 2277923831))]
 ###[ TLS ]### 
      type= handshake
      version= SSLv3
@@ -140,10 +139,10 @@
       |  msgtype= server_hello
       |  msglen= 90
       |  version= SSLv3
-      |  gmt_unix_time= Mon, 16 Oct 2056 00:25:03 +0000 (2738881503)
-      |  random_bytes= e56f22eef5af9d01eb1261ddeb3da4a480ce760046fcd6516da0781f
+      |  gmt_unix_time= Tue, 20 Apr 2038 03:32:19 +0000 (2155347139)
+      |  random_bytes= ad473eda733edb7c0c90b4a38fea6451bf45dd2d9044ef6e8fc1faeb
       |  sidlen= 32
-      |  sid= '\xa6\xb1\x80\\\xfe\xc0{\xfb\xf6\xeb3\xe4{\x15\xdf\x199\x99\xbf}f\x89Y\xa5#|.\xbajv\xee='
+      |  sid= 'XI\x8d\x81@O@\xeb\xd4\xd5\x9c\xc2\x9e#\xc1\x9b\xd0\x84\xe0\xa0\x92\xa5\xa8\x94\xc9zFhG\x19\x96z'
       |  cipher= TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA
       |  comp= null
       |  extlen= 18
@@ -175,7 +174,7 @@
          |  msgtype= certificate
          |  msglen= 785
          |  certslen= 782
-         |  certs= [(779, [X.509 Cert. Subject:/CN=morpheus, Issuer:/CN=morpheus])]
+         |  certs= [(779, [X.509 Cert. Subject:/CN=catwoman, Issuer:/CN=catwoman])]
         mac= b''
         pad= b''
         padlen= None
@@ -193,12 +192,12 @@
             |   |  curve_type= named_curve
             |   |  named_curve= secp256r1
             |   |  pointlen= 65
-            |   |  point= "\x049\xdc\r\xc1\x87\xa4eYN\xd3\xcc\x0b\r\xfb=\xad`G\xff\xdc\xe5\x06\x81\xc7N\x08\nN\x1a\xe8\x1b\xa8\x12\x97fl{VN\xad\x18?\xc5\xac\x9b\xb0'[%\xe1\xa6~\x94w-\xfe\x94\xdd\xdci\xe9\xdf\x83\xf0"
+            |   |  point= "\x04+\x11\xfe^\xe84\xbc\n\xe6\xb9\x1b\xa6\x08\xfc\xa0\x83\x0bPz\xc2\x93\xe2\x03\xdd2\xf4\x16z\xd9\xc4\xb8\xc1\xf3|\x8b\x9a'\xf9\x93A\xc8\xf5\x12\x00\x04\xe6\x1d\xc3\xc8w-\xda$\x0e(\x13\x81\xe1\xe8\x12\xee\xb1\x0c\x15"
             |  \sig\
             |   |###[ TLS Digital Signature ]### 
             |   |  sig_alg= None
             |   |  sig_len= 256
-            |   |  sig_val= '\x11\x84 ?\xdb\x94BL\x0bGY))\x91\xb7\xea\x05>F1\x80\x03b\xd7\xb2\x92)\xd86\xe8[`\xe7\x08+\x18P\xa8{h\x1d\x11\x88Q\xc8\xca=K#c\x94\xbc@\\\x98\x0b\x16Y:\x8dluP\x97\xe1JH\x88\xbdF\xea\x0e\xf7\xdc:f\x90\xa1\xb2\xe2\xe0\xc0\x87\xd2\x05&\xc0c\xf2\x15K\x17zj\x92\x04\xe7aty~\n\x19\xbd\x1e\xf5\x0b\xb8)\xcf\xefs\x06\x80\x01\x94\x07\xbe\xa6D\xc0s\x1e`8\xd9\xba<\xa5\xeb\xe6&\x12%}\xe4\xd2\x1c\xf96\x96\x87\x8f\xaeP\xb8]%\x10\xc5v\x0b\xc8\x99\xb0n@=y\xcc\xc9/\xcfy`y\xf0\x89\x86\xf5,;\xdb\x06\x0c\xf9\x9d\n\x17\xbc\xafT<\xc5S\xc9\x8e\xd8\xaaP\xda\x11z\x07\xb4\xffB\x81}P>T\xc9\x99\x7fp\xa6`\xc4\xf7"\xe6\xfe\rs\x89\xfcB\xba\xa3i\x9b\x9b\x93\xcdD\xe1\x82\x17E\xee\xb3\xae\x8bl:P\ns\x9d\xaaz\xe0\x82\xf4\t\r\xe8\x19E\'k\x98\xfd\xfa\xcf'
+            |   |  sig_val= '}\x048\x82\xa6!Y\x1f\xd0\xec\x84\xaa\xd7\xe2\'\xd0\xe6\xd3\xf3H\xd2BP\x10w\x87\x16F\xa5\x04\xfd"\x86\xb9\xce[\xa9\xee\x84\x15~\xe7\x10\xd9\xad\rTd\x0b\x1b\xf7\x1e(\xcd\x8f\xe9bg\xa2\x1c\t\x1coF\x0e\x94\xf9\xfe\xf9\xe5\xcb\xf0NH\xa2=\x9d3;\x94\xf4\xb4\x0c\x90\xb8\\\xf9U\xd6\xee\xa6N\xc2r*dXrH\xe6Y\x9d:0\xeaG6g)\xabZ\xc5\xf7\x84\xb8=\xe0".Y\x80\xce\xee\\5c7o\x91\xf0m?\xf9\xb4\n,"\x19f\xf8\xc7\xe8g \xd1\xda\xc7\r\xa4\xbb\xd2\x18\x84"\xd8io\x97\xa3\x13\xcb\x1f\x02\x86M!\xab\x87g\xcd~l\xd1\x8a\xf83`fN\xf0\xc4\x00\xa7uI\xf2\xe1Y\xaa\x97\x1a?\xed#\xb9Oe\xe6Y\xbcZ\xbaOt\x82k\xa6\x19\xd4\xbe\x8c\x96KV\xd7\xfd\x8f\xa5\x1fO\xc2\xf2:\x08\x08`\xe9q&\x0f(\x9a\xce\xfb\xc6\x0fm)\t\xfe\xb3\xbb\x7f\x19W\x0b3\xf6\x7f<\x80\xefO\x90\xdc\xd4'
            mac= b''
            pad= b''
            padlen= None
@@ -216,30 +215,30 @@
               padlen= None
 
 ###[ TCP ]### 
-  sport= 56008
+  sport= 42884
   dport= https
-  seq= 3556361630
-  ack= 2440460443
+  seq= 2363500227
+  ack= 4099287249
   dataofs= 8
   reserved= 0
   flags= A
   window= 501
-  chksum= 0x5859
+  chksum= 0x5851
   urgptr= 0
-  options= [('NOP', None), ('NOP', None), ('Timestamp', (117668064, 1372246719))]
+  options= [('NOP', None), ('NOP', None), ('Timestamp', (2277923835, 3126597771))]
 
 ###[ TCP ]### 
-  sport= 56008
+  sport= 42884
   dport= https
-  seq= 3556361630
-  ack= 2440460443
+  seq= 2363500227
+  ack= 4099287249
   dataofs= 8
   reserved= 0
   flags= PA
   window= 501
-  chksum= 0x58ef
+  chksum= 0x58e7
   urgptr= 0
-  options= [('NOP', None), ('NOP', None), ('Timestamp', (117668065, 1372246719))]
+  options= [('NOP', None), ('NOP', None), ('Timestamp', (2277923835, 3126597771))]
 ###[ TLS ]### 
      type= handshake
      version= SSLv3
@@ -251,7 +250,7 @@
       |  msglen= 66
       |  \exchkeys\
       |   |###[ Raw ]### 
-      |   |  load= 'A\x04\x7f\xb1\r\x8b\xfb/\xa3\x1d9!\xc9\xb3\xb6F\x99,\xedX\xe4\xda\xdbn\x06\x00F\x160\xe0L!\xd1\x9fr@\xf7\xcc:b\x08\xa7\xe8\xea\x91\xa0N\xf1\x87\xfb;|\xe7}E(\x8b\x18\xb2\x1dY\x0c\x8c\x87\x033'
+      |   |  load= 'A\x04\xaa\x7fxL\x92RF\x0b\x8cA\xb7Ad\xc1\n\xe3z\xf1\xee\xbf\x8c\x8a\x915G\xc8\xf23R7\xc9\x07\x95\xb9\x8a~\xf17\xe3\xe0\x87\x87\xdb|\xfc\xcf@\xa4\x14\xe9\xd1\x87c\xb7];\x11\x19\x18\x8e\xdc*\xf6\xb7'
      mac= b''
      pad= b''
      padlen= None
@@ -273,36 +272,36 @@
            iv= b''
            \msg\
             |###[ Raw ]### 
-            |  load= 'kD\x8b#\xa2-\xa9v\xf8\t\xf1<\x1c\xbcW\xf8\xb4\xa5\xea\xf8\x14\xf2\x8e\x8cCZ\xbb\x9f\xc7\x99\x0bB\x86\xee\xafJ1Mn\x14\xf2k\xf8\xb5\xc7\xcd\x9a\x14\xf9mI\xb5:t\x1a\xea\xb3xU\xc2sK}\xe3'
+            |  load= '\x80\x0e\x07\x86\xaa\xd5\x87,\x9e?\x809#\xe3\xf6\xcbf\x92\xf8.\xd1\xee"\xdeV)\x0f\xf5-\xe6{[\xe7\xff\xef\x9b\xd9ZK\x19\xb6\xdc\r\',1\x88\x96yl\xf2\xbbpI 4\xd9^\xf2!\xbb\xdd\xc17'
            mac= b''
            pad= b''
            padlen= None
 
 ###[ TCP ]### 
   sport= https
-  dport= 56008
-  seq= 2440460443
-  ack= 3556361780
+  dport= 42884
+  seq= 4099287249
+  ack= 2363500377
   dataofs= 8
   reserved= 0
   flags= A
   window= 506
-  chksum= 0x5859
+  chksum= 0x5851
   urgptr= 0
-  options= [('NOP', None), ('NOP', None), ('Timestamp', (1372246720, 117668065))]
+  options= [('NOP', None), ('NOP', None), ('Timestamp', (3126597772, 2277923835))]
 
 ###[ TCP ]### 
   sport= https
-  dport= 56008
-  seq= 2440460443
-  ack= 3556361780
+  dport= 42884
+  seq= 4099287249
+  ack= 2363500377
   dataofs= 8
   reserved= 0
   flags= PA
   window= 506
-  chksum= 0x58a4
+  chksum= 0x589c
   urgptr= 0
-  options= [('NOP', None), ('NOP', None), ('Timestamp', (1372246720, 117668065))]
+  options= [('NOP', None), ('NOP', None), ('Timestamp', (3126597772, 2277923835))]
 ###[ TLS ]### 
      type= change_cipher_spec
      version= SSLv3
@@ -321,20 +320,61 @@
         iv= b''
         \msg\
          |###[ Raw ]### 
-         |  load= '%\xfc)I\xc1\xee\xcc\xe0\x90\xcdj\xb3\xc0\x99I;\xa5q\x8d\x03\xed=\xce\xa7\xf9!\xf6\x1cye\x8cDQ)\xdd\n\xe6\xc0\xdf\xad\xc1q\x0f\x7f\x83\\\xf4\x0e\x06\xb1\xe0\xc4K\\\xd9U\x00G\xfeK\xdc\x92\nq'
+         |  load= "+\xe1\xa1\x17\xfe\x8a\x99\xb6\xb7\xa4\x96\xe2\x92\xad\xa1\xe2\x1c\x03{\xef\xcbo\x0c8QQ\xe9\xcf\xcb\x91&\xb6H4\xe3Y\x8a`\x08n\x8361\xba\x1b\xf4\xcbq2*\xa4\xd2\x98\x06\x8bb\xd0\x96*N^~\xfd'"
         mac= b''
         pad= b''
         padlen= None
 
 ###[ TCP ]### 
-  sport= 56008
+  sport= 42884
   dport= https
-  seq= 3556361780
-  ack= 2440460518
+  seq= 2363500377
+  ack= 4099287324
   dataofs= 8
   reserved= 0
   flags= A
   window= 501
-  chksum= 0x5859
+  chksum= 0x5851
   urgptr= 0
-  options= [('NOP', None), ('NOP', None), ('Timestamp', (117668065, 1372246720))]
+  options= [('NOP', None), ('NOP', None), ('Timestamp', (2277923836, 3126597772))]
+
+###[ TCP ]### 
+  sport= 42884
+  dport= https
+  seq= 2363500377
+  ack= 4099287324
+  dataofs= 8
+  reserved= 0
+  flags= FA
+  window= 501
+  chksum= 0x5851
+  urgptr= 0
+  options= [('NOP', None), ('NOP', None), ('Timestamp', (2277925293, 3126597772))]
+
+###[ TCP ]### 
+  sport= https
+  dport= 42884
+  seq= 4099287324
+  ack= 2363500378
+  dataofs= 8
+  reserved= 0
+  flags= FA
+  window= 506
+  chksum= 0x5851
+  urgptr= 0
+  options= [('NOP', None), ('NOP', None), ('Timestamp', (3126599229, 2277925293))]
+
+###[ TCP ]### 
+  sport= 42884
+  dport= https
+  seq= 2363500378
+  ack= 4099287325
+  dataofs= 8
+  reserved= 0
+  flags= A
+  window= 501
+  chksum= 0x5851
+  urgptr= 0
+  options= [('NOP', None), ('NOP', None), ('Timestamp', (2277925293, 3126599229))]
+
+<Sniffed: TCP:14 UDP:0 ICMP:0 Other:0>
