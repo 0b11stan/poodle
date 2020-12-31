@@ -101,7 +101,7 @@ Le labo simulera les machines de nos 3 protagonistes:
          pirates mais ne peux pas déchiffrer le flux TLS n'ayant pas accès à la
          clef privé de morpheus.
 
-<img src="./labo.png" align=center />
+![labo](./labo.png)
 
 Pour s'assurer que `trinity` et `morpheus` puissent communiquer malgrès
 d'éventuelles différences de configuration, les deux machines peuvent s'adapter
@@ -309,6 +309,8 @@ suivra ces spécification:
 1. Intercepte et bloque les **"Client Hello"** de `trinity`.
 2. Modifie la version du protocole dans le paquet pour la passer à SSLv3.
 3. Transmet le paquet à `morpheus`.
+
+![poodle](./poodle.png)
 
 Le serveur imaginera que le client ne supporte pas de versions plus récentes de
 TLS et renverra un **"Server Hello"** pour SSLv3. De son côté, le client pensera
