@@ -26,26 +26,26 @@ Organisation du README:
 Le fonctionnement de POODLE est parfaitement illustré par son nom qui est
 l'acronyme de "**P**adding **O**racle **O**n **D**owngraded **L**egacy
 **E**ncryption". Lors d'une attaque par homme du milieux, l'attaquant peut
-"voir" tout le traffique de sa victime. Ce type d'attaque est très fréquent et
-facilité par de nombreuses vunérabilités au niveau des couches physiques et de
-liaison de donnée. Ces vulnérabilités sont difficiles à corrigés pour des
+"voir" tout le trafic de sa victime. Ce type d'attaque est très fréquent et
+est facilité par de nombreuses vunérabilités au niveau des couches physiques et 
+de liaison de données. Ces vulnérabilités sont difficiles à corriger pour des
 raisons d'interopérabilité entre les réseaux à l'échelle d'internet. Ainsi,
-cela fait maintenant plusieurs décénies que les concepteurs d'applications ne se
-reposent plus sur les couches inferieurs pour assurer la confidentialité des
-donnés échangés. Des protocoles de chiffrement comme SSL/TLS sont aujourd'hui
-les seul rempare efficace contre les attaques par homme du milieux.
+cela fait maintenant plusieurs décénnies que les concepteurs d'applications ne 
+se reposent plus sur les couches inferieurs pour assurer la confidentialité des
+données échangées. Des protocoles de chiffrement comme SSL/TLS sont aujourd'hui
+les seuls rempares efficaces contre les attaques par homme du milieux.
 
-L'enjeux pour un attaquant est donc de déjouer ces mechanismes de
-chiffrement de niveau applicatif et c'est ici que POODLE intervient puisquelle
-à pour objectif de permettre, par une attaque "en ligne", le dèchiffrement des
-donnée encapsulés par le protocole TLS.
+L'enjeux pour un attaquant est donc de déjouer ces méchanismes de
+chiffrement de niveau applicatif et c'est ici que POODLE intervient puisqu'elle
+a pour objectif de permettre, par une attaque "en ligne", le déchiffrement des
+données encapsulées par le protocole TLS.
 
 Cette attaque fonctionne souvent en 3 temps:
 1. Mettre en place une attaque par homme du milieux au niveau réseau.
 2. Dégrader le niveau de sécurité d'une connexion tls en forcant une version
    ancienne du protocole.
-3. Utiliser une attaque de cryptanalyse (Padding Oracle) à laquelle la version
-   dégradée est vulnérable pour découvrir une information sensible.
+3. Utiliser une attaque de cryptanalyse (Padding Oracle) sur la version SSL/TLS
+   dégradée qui est alors vulnérable.
 
 ## Preuve d'exploitation
 
@@ -71,13 +71,13 @@ réaliser l'attaque.
 * `make clean` une fois qu'on à fini de jouer pour tout supprimer
 
 Trinity et Morpheus sont deux pirates informatiques réputés. En mission dans la
-matrice, trinity à besoin d'envoyer des informations sensibles au dernier camp
+matrice, Trinity a besoin d'envoyer des informations sensibles au dernier camp
 humain à l'exterieur de la matrice (Zion). Avant d'envoyer ses informations à
-morpheus, elle s'inquéte de la sécurité de leur canal de communication mais il
-la rassure en lui indiquant qu'ils chiffrerons leurs échanges avec la dernière
-version de TLS à leur disposition: TLS 1.2. De son côté, l'agent smith qui a un
-acces privilégié au réseau de la matrice à entrepris une attaque par homme du
-millieu. Il doit donc trouver un moyen de décrypter la connexion TLS s'il veut
+Morpheus, elle s'inquiète de la sécurité de leur canal de communication mais il
+la rassure en lui indiquant qu'ils chiffreront leurs échanges avec la dernière
+version de TLS à leur disposition: TLS 1.2. De son côté, l'Agent Smith qui a un
+accès privilégié au réseau de la matrice à entrepris une attaque par homme du
+milieu. Il doit donc trouver un moyen de décrypter la connexion TLS s'il veut
 connaitre le contenu de la communication.
 
 ![trinity poodled](./pics/trinity.jpg)
@@ -85,25 +85,25 @@ connaitre le contenu de la communication.
 Le labo simulera les machines de nos 3 protagonistes:
 
 `morpheus`: La machine de morpheus expose un serveur supportant le protocole
-            ssl/tls pour chiffrer les échange. Il contient une paire de clefs
+            ssl/tls pour chiffrer les échanges. Il contient une paire de clefs
             asymétriques générés par morpheus. Son serveur est connecté sur le
             réseau de Zion et peut communiquer avec les machines du réseau de la
             matrice à travers un routeur.
 
 `trinity`: La machine de trinity à un client ssl/tls. Le certificat de morpheus
-           contenant sa clef publique y est installé. Sa machine est connecté au
-           réseau de la matrice mais peut communiquer avec le réseau de Zion
+           contenant sa clef publique y est installé. Sa machine est connectée 
+           au réseau de la matrice mais peut communiquer avec le réseau de Zion
            en passant par un routeur de la matrice.
 
-`smith`: L'agent smith à pris le contrôle du routeur de la matrice qui fait le
+`smith`: L'agent smith a pris le contrôle du routeur de la matrice qui fait le
          lien entre le serveur de morpheus et la machine de trinity. Il est en
-         capacité de décoder tout le traffique qui transite entre les deux
-         pirates mais ne peux pas déchiffrer le flux TLS n'ayant pas accès à la
+         capacité de décoder tout le trafic qui transite entre les deux
+         pirates mais ne peut pas déchiffrer le flux TLS n'ayant pas accès à la
          clef privé de morpheus.
 
 ![labo](./pics/labo.png)
 
-Pour s'assurer que `trinity` et `morpheus` puissent communiquer malgrès
+Pour s'assurer que `trinity` et `morpheus` puissent communiquer malgré
 d'éventuelles différences de configuration, les deux machines peuvent s'adapter
 à la version de SSL/TLS proposé par l'autre. L'agent Smith est au courant de
 cette fonctionnalité qui peut jouer en sa faveur.
@@ -111,14 +111,14 @@ cette fonctionnalité qui peut jouer en sa faveur.
 #### Etape 1 : Construction de l'infra
 
 La commande `make prepare`, jouée à la racine du dépôt, s'assure d'abord que
-toute trace d'une ancienne execution du labo à été supprimée. Une paire
+toute trace d'une ancienne execution du labo a été supprimé. Une paire
 certificat/clef privée est ensuite générée et sera utilisée plus tard pour
 chiffrer la communication avec TLS.
 
-Une fois les clef générés, les machines `trinity` et `morpheus` sont
+Une fois les clefs générés, les machines `trinity` et `morpheus` sont
 construites. On peut se rendre compte dans le fichier [Dockerfile](./Dockerfile)
 que ces machines reposent sur la même image `openssl-ssl3` qui permet en fait de
-réinstaller openssl en activant le protocole ssl3 qui est désacitvé par défaut.
+réinstaller openssl en activant le protocole ssl3 qui est désactivé par défaut.
 C'est la ligne 9 qui est vraiment intéressante et modifie les options de build
 d'openssl:
 ```Dockerfile
@@ -138,21 +138,21 @@ tôt. Pour cela, on va jouer les commandes suivantes à la racine du dépôt
 (chacunes dans un terminal différent):
 
 `make morpheus`:
-* Démarre une machine a partir de l'image `morpheus` construite plus tôt.
+* Démarre une machine à partir de l'image `morpheus` construite plus tôt.
 * Ajoute cette machine dans le réseau `zion`.
 * Renvoie un shell interactif bash au sein de cette machine.
 
 `make smith`:
-* Démarre une machine a partir de l'image `smith` construite plus tôt.
+* Démarre une machine à partir de l'image `smith` construite plus tôt.
 * Ajoute cette machine dans le réseau `matrix`.
 * Renvoie un shell interactif bash au sein de cette machine.
 
 `make trinity`:
-* Démarre une machine a partir de l'image `trinity` construite plus tôt.
+* Démarre une machine à partir de l'image `trinity` construite plus tôt.
 * Ajoute cette machine dans le réseau `matrix`.
 * Renvoie un shell interactif bash au sein de cette machine.
 
-Une fois ces trois machines démarrer, on peut constater que `trinity` peut ping
+Une fois ces trois machines démarrées, on peut constater que `trinity` peut ping
 `smith` mais pas `morpheus`. Pour l'instant, morpheus n'est tout simplement pas
 connecté à la matrice.
 
@@ -180,14 +180,14 @@ commande `make clean` à la racine du dépôt.
 
 Comme expliqué auparavant, `smith` est déjà en situation d'homme du milieu dans
 ce labo. Nous présenterons dans un premier temps le fonctionnement de l'attaque
-cryptographique "Padding Oracle" pour décrypter un traffique chiffré avec SSLv3.
+cryptographique "Padding Oracle" pour décrypter un trafic chiffré avec SSLv3.
 Nous verrons ensuite comment forcer `morpheus` et `trinity` à utiliser cette
-version vulnérable alors même qu'ils préférent tout les deux une version plus
+version vulnérable alors même qu'ils préférent tous les deux une version plus
 récente du protocole.
 
 #### Padding Oracle
 
-Voyons dans un premier lieux comment fonctionne l'attaque de padding Oracle
+Voyons dans un premier lieu comment fonctionne l'attaque de padding Oracle
 sur SSLv3. Pour tester cette attaque nous allons utiliser une connection
 volontairement forcée en SSLv3 des deux côtés.
 
@@ -227,7 +227,7 @@ Using default temp ECDH parameters
 ACCEPT
 ```
 
-On peut analyser en parallèle toute le traffique depuis `smith` en utilisant
+On peut analyser en parallèle toute le trafic depuis `smith` en utilisant
 scapy en mode interractif (commande `scapy3` dans le shell de `smith`):
 ```python
 load_layer('tls')
@@ -288,11 +288,11 @@ SSL-Session:
 ```
 
 
-Pour constater plus directement le changement de protocole qui à eu lieux, nous
+Pour constater plus directement le changement de protocole qui a eu lieu, nous
 pouvons nous référer au fichier
 [server_downgrade.py](./captures/server_downgrade.py) (format text) ou au
-fichier [server_downgrade.pcap](./captures/server_downgrade.pcap) (a ouvrir dans
-wireshark). On y vois que le handshake initié par `trinity` ( **Client Hello** )
+fichier [server_downgrade.pcap](./captures/server_downgrade.pcap) (à ouvrir dans
+wireshark). On y voit que le handshake initié par `trinity` ( **Client Hello** )
 demande bien la version TLS1.2 du protocole mais que `morpheus` répond en
 proposant le protocole SSL3.0 ( **Server Hello** ).
 
@@ -315,7 +315,7 @@ suivra ces spécification:
 Le serveur imaginera que le client ne supporte pas de versions plus récentes de
 TLS et renverra un **"Server Hello"** pour SSLv3. De son côté, le client pensera
 que c'est le serveur qui ne supporte pas TLS et reverra ses ambitions
-cryptographiques à la baisse comme dans les exemples précédent.
+cryptographiques à la baisse comme dans les exemples précédents.
 
 _TODO: exploitation incoming..._
 
@@ -323,20 +323,20 @@ _TODO: exploitation incoming..._
 
 Cette attaque fut extrêmement sensible et d'une efficacité redoutable. Les
 réponses ont été multiples pour corriger la vulnérabilité et des efforts de la
-communauté à tout les niveaux ont permit une sécurité en profondeur qui rend
+communauté à tous les niveaux ont permis une sécurité en profondeur qui rend
 cette attaque de moins en moins probable sur la grande majorité des
 applications:
 
-* Les dévellopeurs de serveur web (apache, nginx, ...) ont ajouté des options
-  permettant de choisir, au moyens d'une liste blanche, les versions de TLS que
+* Les développeurs de serveur web (apache, nginx, ...) ont ajouté des options
+  permettant de choisir, aux moyens d'une liste blanche, les versions de TLS que
   leur produit pourrait accepter obligeant les administrateurs à spécifier
   explicitement le niveau de sécurité de leurs serveurs en fonction du niveau
   d'intéropérabilité nécessaire.
-* Les dévellopeurs de client web (curl, firefox, chrome, ...) ont durcie les
+* Les développeurs de client web (curl, firefox, chrome, ...) ont durci les
   options par défaut, ajoutant la possibilité de limiter l'étandue des versions
   accepté et affichant souvent des messages d'avertissement lorsqu'un protocole
   particulièrement vieux est utilisé.
-* Les dévellopeurs des librairies de cryptographie (openssl, libressl, ...), sur
+* Les développeurs des librairies de cryptographie (openssl, libressl, ...), sur
   lesquelles les programmes cités auparavant s'appuient, ont souvent déprécié
   les protocoles en question au sein même du code source, obligeant une
   reconstruction des librairies pour utiliser les versions vulnérables du
