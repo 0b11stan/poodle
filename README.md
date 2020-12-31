@@ -47,6 +47,8 @@ Cette attaque fonctionne souvent en 3 temps:
 3. Utiliser une attaque de cryptanalyse (Padding Oracle) à laquelle la version
    dégradée est vulnérable pour découvrir une information sensible.
 
+![trinity poodled](./trinity.jpg)
+
 ## Preuve d'exploitation
 
 Pour expliquer l'exploitation de cette attaque, nous avons préparer un labo
