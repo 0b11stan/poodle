@@ -5,6 +5,24 @@ attaque permet de [décrypter](https://chiffrer.info/) une communication chiffr�
 avec TLS. Elle s'appuie sur un enchainement de plusieurs vulnérabilités qui
 touchent les serveurs web dont la version de TLS est **inferieur à 1.3**.
 
+Organisation du README:
+* [Preuve d'exploitation](https://github.com/0b11stan/poodle#preuve-dexploitation)
+  - [Le laboratoire](https://github.com/0b11stan/poodle#le-laboratoire)
+    * [Etape 1 : Construction de l'infra](https://github.com/0b11stan/poodle#etape-1--construction-de-linfra)
+    * [Etape 2 : Connection aux machines](https://github.com/0b11stan/poodle#etape-2--connection-aux-machines)
+    * [Etape 3 : Configurer les réseau](https://github.com/0b11stan/poodle#etape-3--configurer-les-r%C3%A9seau)
+    * [Destruction du laboratoire]()
+  - [Exploitation]()
+    * [Padding Oracle]()
+      - [Présentation de la vulnérabilité]()
+      - [Demonstration de l'exploitation]()
+    * [Downgraded Legacy Encryption]()
+      - [Présentation de la vulnérabilité]()
+      - [Demonstration de l'exploitation]()
+* [Mitigation]()
+* [Achivements]()
+* [Ressources]()
+
 Le fonctionnement de POODLE est parfaitement illustré par son nom qui est
 l'acronyme de "**P**adding **O**racle **O**n **D**owngraded **L**egacy
 **E**ncryption". Lors d'une attaque par homme du milieux, l'attaquant peut
@@ -279,7 +297,7 @@ connexion si le client se présente avec le protocole SSLv3 (voir
 [client_downgrade.py](./captures/client_downgrade.py) ou
 [client_downgrade.pcap](./captures/client_downgrade.pcap) ).
 
-##### Demonstration de l'exploitation
+##### Démonstration de l'exploitation
 
 Pour exploiter cette vulnérabilité il suffit d'écrire un script python qui
 suivra ces spécification:
@@ -292,6 +310,8 @@ Le serveur imaginera que le client ne supporte pas de versions plus récentes de
 TLS et renverra un **"Server Hello"** pour SSLv3. De son côté, le client pensera
 que c'est le serveur qui ne supporte pas TLS et reverra ses ambitions
 cryptographiques à la baisse comme dans les exemples précédent.
+
+_TODO: exploitation incoming..._
 
 ## Mitigation
 
