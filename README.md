@@ -101,9 +101,7 @@ Le labo simulera les machines de nos 3 protagonistes:
          pirates mais ne peux pas déchiffrer le flux TLS n'ayant pas accès à la
          clef privé de morpheus.
 
-<img src="./labo.png" width=500 />
-
-![labo](./labo.png)
+<div style="text-align:center"><img src="./labo.png"/></div>
 
 Pour s'assurer que `trinity` et `morpheus` puissent communiquer malgrès
 d'éventuelles différences de configuration, les deux machines peuvent s'adapter
