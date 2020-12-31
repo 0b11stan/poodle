@@ -1,23 +1,23 @@
 # Proof of concept: POODLE
 
 Ce dépôt contient une preuve d'exploitation de l'attaque **POODLE**. Cette
-attaque permet de décrypter une communication chiffrée avec TLS. Elle s'appuie
-sur un enchainement de plusieurs vulnérabilités qui touchent les serveurs web
-dont la version de TLS est **inferieur à 1.3**.
+attaque permet de [décrypter](https://chiffrer.info/) une communication chiffrée
+avec TLS. Elle s'appuie sur un enchainement de plusieurs vulnérabilités qui
+touchent les serveurs web dont la version de TLS est **inferieur à 1.3**.
 
 Le fonctionnement de POODLE est parfaitement illustré par son nom qui est
 l'acronyme de "**P**adding **O**racle **O**n **D**owngraded **L**egacy
 **E**ncryption". Lors d'une attaque par homme du milieux, l'attaquant peut
 "voir" tout le traffique de sa victime. Ce type d'attaque est très fréquent et
 facilité par de nombreuses vunérabilités au niveau des couches physiques et de
-liaison de donnée. Ces vulnérabilité sont difficiles à corrigés prour des
+liaison de donnée. Ces vulnérabilités sont difficiles à corrigés pour des
 raisons d'interopérabilité entre les réseaux à l'échelle d'internet. Ainsi,
 cela fait maintenant plusieurs décénies que les concepteurs d'applications ne se
 reposent plus sur les couches inferieurs pour assurer la confidentialité des
 donnés échangés. Des protocoles de chiffrement comme SSL/TLS sont aujourd'hui
 les seul rempare efficace contre les attaques par homme du milieux.
 
-Aujourd'hui, l'enjeux pour un attaquant est donc de déjouer ces mechanismes de
+L'enjeux pour un attaquant est donc de déjouer ces mechanismes de
 chiffrement de niveau applicatif et c'est ici que POODLE intervient puisquelle
 à pour objectif de permettre, par une attaque "en ligne", le dèchiffrement des
 donnée encapsulés par le protocole TLS.
@@ -27,7 +27,7 @@ Cette attaque fonctionne souvent en 3 temps:
 2. Dégrader le niveau de sécurité d'une connexion tls en forcant une version
    ancienne du protocole.
 3. Utiliser une attaque de cryptanalyse (Padding Oracle) à laquelle la version
-   dégradée est vulnérable pour découvrir un élément sensible.
+   dégradée est vulnérable pour découvrir une information sensible.
 
 ## Preuve d'exploitation
 
@@ -42,7 +42,39 @@ Cette attaque fonctionne souvent en 3 temps:
 * _be nasty_
 * `make clean` une fois qu'on à fini de jouer pour tout supprimer
 
-TODO : scénario
+Trinity et Morpheus sont deux pirates informatiques réputés. En mission dans la
+matrice, trinity à besoin d'envoyer des informations sensibles au dernier camp
+humain à l'exterieur de la matrice (Zion). Avant d'envoyer ses informations à
+morpheus, elle s'inquéte de la sécurité de leur canal de communication mais il
+la rassure en lui indiquant qu'ils chiffrerons leurs échanges avec la dernière
+version de TLS à leur disposition: TLS 1.2. De son côté, l'agent smith qui a un
+acces privilégié au réseau de la matrice à entrepris une attaque par homme du
+millieu. Il doit donc trouver un moyen de décrypter la connexion TLS s'il veut
+connaitre le contenu de la communication.
+
+Le labo simulera les machines de nos 3 protagonistes:
+
+`morpheus`: La machine de morpheus expose un serveur supportant le protocole
+            ssl/tls pour chiffrer les échange. Il contient une paire de clefs
+            asymétriques générés par morpheus. Son serveur est connecté sur le
+            réseau de Zion et peut communiquer avec les machines du réseau de la
+            matrice à travers un routeur.
+
+`trinity`: La machine de trinity à un client ssl/tls. Le certificat de morpheus
+           contenant sa clef publique y est installé. Sa machine est connecté au
+           réseau de la matrice mais peut communiquer avec le réseau de Zion
+           en passant par un routeur de la matrice.
+
+`smith`: L'agent smith à pris le contrôle du routeur de la matrice qui fait le
+         lien entre le serveur de morpheus et la machine de trinity. Il est en
+         capacité de décoder tout le traffique qui transite entre les deux
+         pirates mais ne peux pas déchiffrer le flux TLS n'ayant pas accès à la
+         clef privé de morpheus.
+
+Pour s'assurer que `trinity` et `morpheus` puissent communiquer malgrès
+d'éventuelles différences de configuration, les deux machines peuvent s'adapter
+à la version de SSL/TLS proposé par l'autre. L'agent Smith est au courant de
+cette fonctionnalité qui peut jouer en sa faveur.
 
 #### Construction des machines
 
