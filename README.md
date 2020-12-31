@@ -31,6 +31,16 @@ Cette attaque fonctionne souvent en 3 temps:
 
 ## Preuve d'exploitation
 
+Pour expliquer l'exploitation de cette attaque, nous avons préparer un labo
+qui simule un scénario classique mettant en scène l'attaque. Le labo utilise
+[docker](https://docs.docker.com/get-started/overview/) pour virtualiser le
+réseau et les machines et [make](https://www.gnu.org/software/make/) pour
+automatiser la construction du labo.
+
+On utilisera également [openssl](https://github.com/openssl/openssl) pour
+simuler les clients et serveurs SSL/TLS et [scapy](https://scapy.net/) pour
+réaliser l'attaque.
+
 ### Le laboratoire
 
 **TL;DR:**
@@ -76,54 +86,73 @@ d'éventuelles différences de configuration, les deux machines peuvent s'adapte
 à la version de SSL/TLS proposé par l'autre. L'agent Smith est au courant de
 cette fonctionnalité qui peut jouer en sa faveur.
 
-#### Construction des machines
+#### Etape 1 : Construction de l'infra
 
-`make prepare`
+La commande `make prepare`, jouée à la racine du dépôt, s'assure d'abord que
+toute trace d'une ancienne execution du labo à été supprimée. Une paire
+certificat/clef privée est ensuite générée et sera utilisée plus tard pour
+chiffrer la communication avec TLS.
 
-Remarque: les ligne 19 et 20 de la configuration nginx sont intéressantes et
-contiennent la vulnérabilité.
-```
-19  ssl_protocols SSLv3 TLSv1 TLSv1.1 TLSv1.2;
-20  ssl_prefer_server_ciphers on;
-```
-
-En supprimant la mention `SSLv3` de la ligne 19 on empêcherait l'attaque.
-
-#### Connection aux machines
-
-`make morpheus`, `make smith`, `make trinity`
-
-#### Configurer les réseau
-
-`make network`
-
-Joker:
-```
-root@smith:~# ping -c 1 morpheus | grep received
-1 packets transmitted, 1 received, 0% packet loss, time 0ms
-root@smith:~# ping -c 1 trinity | grep received
-1 packets transmitted, 1 received, 0% packet loss, time 0ms
+Une fois les clef générés, les machines `trinity` et `morpheus` sont
+construites. On peut se rendre compte dans le fichier `Dockerfile` que ces
+machines reposent sur la même image `openssl-ssl3` qui permet en fait de
+réinstaller openssl en activant le protocole ssl3 qui est désacitvé par défaut.
+C'est la ligne 9 qui est vraiment intéressante et modifie les options de build
+d'openssl:
+```Dockerfile
+RUN sed -i 's/no-ssl2 no-ssl3/enable-ssl3/' /_apt/openssl-1.0.1t/debian/rules
 ```
 
-Batman:
+Sur la machine `smith` on installe **scapy** pour pouvoir analyser le réseau et
+le paquet python **cryptographie** nécessaire à scapy pour pouvoir décoder le
+protocole SSL/TLS.
+
+Enfin, les réseaux `zion` et `matrix` sont créés.
+
+#### Etape 2 : Connection aux machines
+
+Cette étape permet d'obtenir un shell dans chacune des machines décrites plus
+tôt. Pour cela, on va jouer les commandes suivantes à la racine du dépôt
+(chacunes dans un terminal différent):
+
+`make morpheus`:
+* Démarre une machine a partir de l'image `morpheus` construite plus tôt.
+* Ajoute cette machine dans le réseau `zion`.
+* Renvoie un shell interactif bash au sein de cette machine.
+
+`make smith`:
+* Démarre une machine a partir de l'image `smith` construite plus tôt.
+* Ajoute cette machine dans le réseau `matrix`.
+* Renvoie un shell interactif bash au sein de cette machine.
+
+`make trinity`:
+* Démarre une machine a partir de l'image `trinity` construite plus tôt.
+* Ajoute cette machine dans le réseau `matrix`.
+* Renvoie un shell interactif bash au sein de cette machine.
+
+Une fois ces trois machines démarrer, on peut constater que `trinity` peut ping
+`smith` mais pas `morpheus`. Pour l'instant, morpheus n'est tout simplement pas
+connecté à la matrice.
+
+#### Etape 3 : Configurer les réseau
+
+La commande `make network` (executée à la racine du dépôt) permet de finaliser
+la configuration du labo. Elle ajoute `smith` dans le réseau `zion` et configure
+les règles de routages de `trinity` et `morpheus` pour faire de `smith` leur
+routeur intermédiaire. A partir de ce moment, `smith` est dans une position
+d'homme du milieu. On peut s'en persuader en jouant les commandes suivantes:
 ```
-root@trinity:~# ping -c 1 smith | grep received
-1 packets transmitted, 1 received, 0% packet loss, time 0ms
-root@trinity:~# ping -c 1 morpheus | grep received
-1 packets transmitted, 1 received, 0% packet loss, time 0ms
+root@smith:~# tcpdump icmp
+root@morpheus:~# ping -c 1 trinity
 ```
 
-Catwoman:
-```
-root@morpheus:~# ping -c 1 smith | grep received
-1 packets transmitted, 1 received, 0% packet loss, time 0ms
-root@morpheus:~# ping -c 1 trinity | grep received
-1 packets transmitted, 1 received, 0% packet loss, time 0ms
-```
+A partir de maintenant, le labo est correctement configuré pour y réaliser
+l'attaque POODLE.
 
-#### Détruire le laboratoire et tout les méfais qu'il contient
+#### Destruction du laboratoire
 
-`make clean`
+Pour supprimer toutes les machines et réseaux créés, jouer simplement la
+commande `make clean` à la racine du dépôt.
 
 ### Exploitation
 
