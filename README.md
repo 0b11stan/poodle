@@ -47,8 +47,6 @@ Cette attaque fonctionne souvent en 3 temps:
 3. Utiliser une attaque de cryptanalyse (Padding Oracle) à laquelle la version
    dégradée est vulnérable pour découvrir une information sensible.
 
-![trinity poodled](./trinity.jpg)
-
 ## Preuve d'exploitation
 
 Pour expliquer l'exploitation de cette attaque, nous avons préparer un labo
@@ -82,6 +80,8 @@ acces privilégié au réseau de la matrice à entrepris une attaque par homme d
 millieu. Il doit donc trouver un moyen de décrypter la connexion TLS s'il veut
 connaitre le contenu de la communication.
 
+![trinity poodled](./trinity.jpg)
+
 Le labo simulera les machines de nos 3 protagonistes:
 
 `morpheus`: La machine de morpheus expose un serveur supportant le protocole
@@ -100,6 +100,8 @@ Le labo simulera les machines de nos 3 protagonistes:
          capacité de décoder tout le traffique qui transite entre les deux
          pirates mais ne peux pas déchiffrer le flux TLS n'ayant pas accès à la
          clef privé de morpheus.
+
+![labo](./labo.png)
 
 Pour s'assurer que `trinity` et `morpheus` puissent communiquer malgrès
 d'éventuelles différences de configuration, les deux machines peuvent s'adapter
