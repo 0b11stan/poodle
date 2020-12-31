@@ -94,8 +94,8 @@ certificat/clef privée est ensuite générée et sera utilisée plus tard pour
 chiffrer la communication avec TLS.
 
 Une fois les clef générés, les machines `trinity` et `morpheus` sont
-construites. On peut se rendre compte dans le fichier `Dockerfile` que ces
-machines reposent sur la même image `openssl-ssl3` qui permet en fait de
+construites. On peut se rendre compte dans le fichier [Dockerfile](./Dockerfile)
+que ces machines reposent sur la même image `openssl-ssl3` qui permet en fait de
 réinstaller openssl en activant le protocole ssl3 qui est désacitvé par défaut.
 C'est la ligne 9 qui est vraiment intéressante et modifie les options de build
 d'openssl:
@@ -156,17 +156,42 @@ commande `make clean` à la racine du dépôt.
 
 ### Exploitation
 
-Realiser une connection ssl en forcant la version 3:
-```
-root@morpheus:~# openssl s_server -ssl3 -key /root/poodled.key -cert /root/poodled.crt -accept 443 -www
-root@trinity:~# openssl s_client -ssl3 -connect morpheus:443
+Comme expliqué auparavant, `smith` est déjà en situation d'homme du milieu dans
+ce labo. Nous présenterons dans un premier temps le fonctionnement de l'attaque
+cryptographique "Padding Oracle" pour décrypter un traffique chiffré avec SSLv3.
+Nous verrons ensuite comment forcer `morpheus` et `trinity` à utiliser cette
+version vulnérable alors même qu'ils préférent tout les deux une version plus
+récente du protocole.
+
+#### Padding Oracle
+
+Voyons dans un premier lieux comment fonctionne l'attaque de padding Oracle
+sur SSLv3. Pour tester cette attaque nous allons utiliser une connection
+volontairement forcée en SSLv3 des deux côtés.
+
+Dans la machine `morpheus`, démarrer un serveur SSLv3:
+```bash
+openssl s_server \            # on veut démarrer un serveur avec openssl
+  -key /root/poodled.key \    # on fournis le chemin de la clef privée
+  -cert /root/poodled.crt \   # on fournis le chemin de la clef publique
+  -ssl3 \                     # le serveur ne connaitra QUE SSLv3
+  -accept 443 \               # le serveur écoutera sur le port 443
+  -www                        # il agira comme un serveur web
 ```
 
-En utilisant les commandes ci-dessus on obtient le traffique SSL détaillé dans
-[trace1.py](./trace1.py) qui passe par smith.
+Dans la machine `trinity`, on initie une connection au serveur:
+```bash
+openssl s_client \        # on veut démarrer un client
+  -ssl3 \                 # le client ne connaitra QUE SSLv3
+  -connect morpheus:443   # on veut se connecter à morpheus sur le port 443
+```
 
-On peut aussi utiliser une commande curl classique qui, si on force le traffique
-en sslv3 (`curl -3 https://morpheus`) va nous donner une trace sensiblement similaire ([trace2.py](./trace2.py)).
+_TODO : exploitation incoming (trace1, trace2) ..._
+
+#### Downgraded Legacy Encryption
+
+Ici nous allons nous intéresser sur la méthode à utiliser pour dégrader la
+version de TLS dans la communication entre `trinity` et `morpheus`.
 
 On à du rebuild openssl pour autoriser l'utilisation de sslv3. Après ça le
 downgrade fonctionne bien.
