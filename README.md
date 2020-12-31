@@ -80,7 +80,7 @@ acces privilégié au réseau de la matrice à entrepris une attaque par homme d
 millieu. Il doit donc trouver un moyen de décrypter la connexion TLS s'il veut
 connaitre le contenu de la communication.
 
-![trinity poodled](./trinity.jpg)
+![trinity poodled](./pics/trinity.jpg)
 
 Le labo simulera les machines de nos 3 protagonistes:
 
@@ -101,7 +101,7 @@ Le labo simulera les machines de nos 3 protagonistes:
          pirates mais ne peux pas déchiffrer le flux TLS n'ayant pas accès à la
          clef privé de morpheus.
 
-![labo](./labo.png)
+![labo](./pics/labo.png)
 
 Pour s'assurer que `trinity` et `morpheus` puissent communiquer malgrès
 d'éventuelles différences de configuration, les deux machines peuvent s'adapter
@@ -310,7 +310,7 @@ suivra ces spécification:
 2. Modifie la version du protocole dans le paquet pour la passer à SSLv3.
 3. Transmet le paquet à `morpheus`.
 
-![poodle](./poodle.png)
+![poodle](./pics/poodle.png)
 
 Le serveur imaginera que le client ne supporte pas de versions plus récentes de
 TLS et renverra un **"Server Hello"** pour SSLv3. De son côté, le client pensera
