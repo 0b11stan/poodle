@@ -345,11 +345,11 @@ applications:
 ## Achivements
 
 - [x] simulter un réseau MITM avec docker
-- [x] sniffer le traffique ssl/tls avec scapy
-- [x] downgrade les version pour pouvoir faire du sslv3
-- [x] désactiver les sécurité pour rendre le labo vulnérables
-- [x] générer un traffique vulnérable avec openssl
-- [ ] dev un script capable de modifier le traffique ssl/tls avec scapy
+- [x] sniffer le trafic ssl/tls avec scapy
+- [x] downgrade les versions pour pouvoir faire du sslv3
+- [x] désactiver les sécurités pour rendre le labo vulnérable
+- [x] générer un trafic vulnérable avec openssl
+- [ ] dev un script capable de modifier le trafic ssl/tls avec scapy
 - [ ] utiliser le script pour réaliser un downgrade de version de tls
 - [ ] implémenter l'attaque padding oracle sur AES CBC
 
